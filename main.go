@@ -13,13 +13,53 @@
 package main
 
 import (
+	"io/ioutil"
+	"log"
+	"os"
+
 	"gopkg.in/alecthomas/kingpin.v2"
+	"gopkg.in/yaml.v2"
 )
 
 var (
-	config = kingpin.Flag("config.file", "Path to the configuration file.").Short('c').Required().ExistingFile()
+	app        = kingpin.New("dashboard-manager", "A command-line dashboard manager.")
+	configFile = app.Flag("config-file", "Path to the configuration file.").Short('c').Required().ExistingFile()
+
+	fetch          = app.Command("fetch", "Fetch dashboards from input grafana.")
+	fetchDirectory = fetch.Flag("output-directory", "Directory to fetch the dashboards to.").Required().String()
 )
 
+type gitConfig struct {
+	URL    string `yaml:"url"`
+	Branch string `yaml:"branch"`
+}
+
+type config struct {
+	Git   gitConfig         `yaml:"git_config"`
+	Input []grafanaInstance `yaml:"grafana_instances_input"`
+	Onput []grafanaInstance `yaml:"grafana_instances_output"`
+}
+
 func main() {
-	kingpin.Parse()
+	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
+	case fetch.FullCommand():
+		cfg, err := loadConfig(*configFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = fetchDashboards(cfg)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
+func loadConfig(configFile string) (*config, error) {
+	data, err := ioutil.ReadFile(configFile)
+	if err != nil {
+		return nil, err
+	}
+	cfg := &config{}
+	err = yaml.Unmarshal(data, cfg)
+	return cfg, err
 }
