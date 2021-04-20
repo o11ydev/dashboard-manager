@@ -20,10 +20,11 @@ import (
 )
 
 type grafanaInstance struct {
-	Name     string `yaml:"name"`
-	URL      string `yaml:"url"`
-	Auth     string `yaml:"api_key"`
-	AuthFile string `yaml:"api_key_file"`
+	Name            string `yaml:"name"`
+	URL             string `yaml:"url"`
+	Auth            string `yaml:"api_key"`
+	AuthFile        string `yaml:"api_key_file"`
+	PurgeDashboards bool   `yaml:"purge_dashboards"`
 }
 
 func (g *grafanaInstance) client() (*sdk.Client, error) {

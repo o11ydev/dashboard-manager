@@ -27,6 +27,10 @@ var (
 
 	fetch          = app.Command("fetch", "Fetch dashboards from input grafana.")
 	fetchDirectory = fetch.Flag("output-directory", "Directory to fetch the dashboards to.").Required().String()
+
+	compare          = app.Command("compare", "Compare dashboards.")
+	compareDirectory = compare.Flag("dashboards-directory", "Directory where the dashboards were fetched.").Required().String()
+	compareResults   = compare.Flag("results", "File to write result to.").Required().String()
 )
 
 type gitConfig struct {
@@ -35,9 +39,9 @@ type gitConfig struct {
 }
 
 type config struct {
-	Git   gitConfig         `yaml:"git_config"`
-	Input []grafanaInstance `yaml:"grafana_instances_input"`
-	Onput []grafanaInstance `yaml:"grafana_instances_output"`
+	Git    gitConfig         `yaml:"git_config"`
+	Input  []grafanaInstance `yaml:"grafana_instances_input"`
+	Output []grafanaInstance `yaml:"grafana_instances_output"`
 }
 
 func main() {
@@ -48,6 +52,15 @@ func main() {
 			log.Fatal(err)
 		}
 		err = fetchDashboards(cfg)
+		if err != nil {
+			log.Fatal(err)
+		}
+	case compare.FullCommand():
+		cfg, err := loadConfig(*configFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = compareDashboards(cfg)
 		if err != nil {
 			log.Fatal(err)
 		}
