@@ -15,6 +15,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -31,7 +32,7 @@ func lazyMkdir(path string) error {
 func fetchDashboards(cfg *config) error {
 	err := lazyMkdir(*fetchDirectory)
 	if err != nil {
-		return err
+		return fmt.Errorf("error making base directory: %w", err)
 	}
 
 	for _, instance := range cfg.Input {
@@ -42,7 +43,7 @@ func fetchDashboards(cfg *config) error {
 		basepath := filepath.Join(*fetchDirectory, instance.Name)
 		err = lazyMkdir(basepath)
 		if err != nil {
-			return err
+			return fmt.Errorf("error making directory for %s: %w", instance.Name, err)
 		}
 
 		dashboards, err := client.Search(context.TODO())
@@ -53,7 +54,7 @@ func fetchDashboards(cfg *config) error {
 			folder := filepath.Join(basepath, d.FolderUID)
 			err := lazyMkdir(folder)
 			if err != nil {
-				return err
+				return fmt.Errorf("error making directory for %s / %s: %w", instance.Name, d.FolderUID, err)
 			}
 			filePath := filepath.Join(folder, d.UID+".json")
 			board, _, err := client.GetDashboardByUID(context.TODO(), d.UID)
