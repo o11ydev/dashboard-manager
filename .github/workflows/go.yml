@@ -1,7 +1,13 @@
 name: go
 on: [push]
-steps:
-  - uses: actions/checkout@v2
-  - uses: actions/setup-go@v2
-  - run: go test
-  - run: go build
+jobs:
+    test:
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-go@v2
+        - run: go test
+    build:
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-go@v2
+        - run: go build
