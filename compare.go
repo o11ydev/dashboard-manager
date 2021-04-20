@@ -28,6 +28,7 @@ type dashboardDiff struct {
 	Source string `json:"source"`
 	UID    string `json:"uid"`
 	Action string `json:"action"`
+	Title  string `json:"title"`
 }
 
 type diff map[string][]dashboardDiff
@@ -77,6 +78,7 @@ func compareDashboards(cfg *config) error {
 						Action: "new",
 						Source: instance.Name,
 						UID:    localDashboard.UID,
+						Title:  localDashboard.Title,
 					})
 					return nil
 				}
@@ -92,6 +94,7 @@ func compareDashboards(cfg *config) error {
 						Action: "modify",
 						Source: instance.Name,
 						UID:    localDashboard.UID,
+						Title:  localDashboard.Title,
 					})
 				}
 
