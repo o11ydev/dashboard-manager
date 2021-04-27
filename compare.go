@@ -21,6 +21,7 @@ import (
 	"path/filepath"
 
 	"github.com/go-test/deep"
+	"github.com/google/go-cmp/cmp"
 	"github.com/grafana-tools/sdk"
 )
 
@@ -59,7 +60,7 @@ func compareDashboards(cfg *config) error {
 				if err != nil {
 					return err
 				}
-				localDashboard := &sdk.Board{}
+				localDashboard := &FullDashboard{}
 				err = json.Unmarshal(data, localDashboard)
 				if err != nil {
 					return err
@@ -67,34 +68,35 @@ func compareDashboards(cfg *config) error {
 
 				var found bool
 				for _, d := range dashboards {
-					if d.UID == localDashboard.UID {
+					if d.UID == localDashboard.Dashboard.UID {
 						found = true
 						break
 					}
 				}
 				if !found {
-					fmt.Printf("dashboard %s is new\n", localDashboard.UID)
+					fmt.Printf("dashboard %s is new\n", localDashboard.Dashboard.UID)
 					output[outputInstance.Name] = append(output[outputInstance.Name], dashboardDiff{
 						Action: "new",
 						Source: instance.Name,
-						UID:    localDashboard.UID,
-						Title:  localDashboard.Title,
+						UID:    localDashboard.Dashboard.UID,
+						Title:  localDashboard.Dashboard.Title,
 					})
 					return nil
 				}
 
-				board, _, err := client.GetDashboardByUID(context.TODO(), localDashboard.UID)
+				board, props, err := client.GetDashboardByUID(context.TODO(), localDashboard.Dashboard.UID)
 				if err != nil {
 					return err
 				}
 
-				if !equalDashboards(*localDashboard, board) {
-					fmt.Printf("dashboard %s (%s) is different\n", board.UID, board.Title)
+				outputDashboard := FullDashboard{Dashboard: board, Properties: props}
+				if !equalDashboards(*localDashboard, outputDashboard) {
+					fmt.Printf("dashboard %s (%s) is different: %v\n", board.UID, board.Title, cmp.Diff(*localDashboard, outputDashboard))
 					output[outputInstance.Name] = append(output[outputInstance.Name], dashboardDiff{
 						Action: "modify",
 						Source: instance.Name,
-						UID:    localDashboard.UID,
-						Title:  localDashboard.Title,
+						UID:    localDashboard.Dashboard.UID,
+						Title:  localDashboard.Dashboard.Title,
 					})
 				}
 
@@ -116,15 +118,18 @@ func compareDashboards(cfg *config) error {
 	return nil
 }
 
-func equalDashboards(a, b sdk.Board) bool {
+func equalDashboards(a, b FullDashboard) bool {
 	reset := func(i sdk.Board) sdk.Board {
 		i.ID = 0
+		i.Slug = ""
 		return i
 	}
-	dashboardA := reset(a)
-	dashboardB := reset(b)
+	dashboardA := reset(a.Dashboard)
+	dashboardB := reset(b.Dashboard)
 	if diff := deep.Equal(dashboardA, dashboardB); diff != nil {
-		//fmt.Printf("diff: %v", diff)
+		return false
+	}
+	if a.Properties.FolderTitle != b.Properties.FolderTitle {
 		return false
 	}
 	return true

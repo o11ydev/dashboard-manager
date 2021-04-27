@@ -31,6 +31,12 @@ var (
 	compare          = app.Command("compare", "Compare dashboards.")
 	compareDirectory = compare.Flag("dashboards-directory", "Directory where the dashboards were fetched.").Required().String()
 	compareResults   = compare.Flag("results", "File to write result to.").Required().String()
+
+	upload               = app.Command("upload", "Upload dashboards.")
+	uploadDirectory      = upload.Flag("dashboards-directory", "Directory where the dashboards were fetched.").Required().String()
+	uploadSource         = upload.Flag("input-instance", "Name of the output instance").Required().String()
+	uploadOutput         = upload.Flag("output-instance", "Name of the output instance").Required().String()
+	uploadDashboardsList = upload.Flag("dashboards", "Dashboards to upload").Required().Strings()
 )
 
 type gitConfig struct {
@@ -61,6 +67,15 @@ func main() {
 			log.Fatal(err)
 		}
 		err = compareDashboards(cfg)
+		if err != nil {
+			log.Fatal(err)
+		}
+	case upload.FullCommand():
+		cfg, err := loadConfig(*configFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = uploadDashboards(cfg)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -19,6 +19,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/grafana-tools/sdk"
 )
 
 func lazyMkdir(path string) error {
@@ -27,6 +29,11 @@ func lazyMkdir(path string) error {
 		return os.Mkdir(path, os.ModePerm)
 	}
 	return err
+}
+
+type FullDashboard struct {
+	Dashboard  sdk.Board           `json:"board"`
+	Properties sdk.BoardProperties `json:"properties"`
 }
 
 func fetchDashboards(cfg *config) error {
@@ -57,11 +64,14 @@ func fetchDashboards(cfg *config) error {
 				return fmt.Errorf("error making directory for %s / %s: %w", instance.Name, d.FolderUID, err)
 			}
 			filePath := filepath.Join(folder, d.UID+".json")
-			board, _, err := client.GetDashboardByUID(context.TODO(), d.UID)
+			board, props, err := client.GetDashboardByUID(context.TODO(), d.UID)
 			if err != nil {
 				return err
 			}
-			data, err := json.MarshalIndent(board, "", " ")
+			data, err := json.MarshalIndent(FullDashboard{
+				Dashboard:  board,
+				Properties: props,
+			}, "", " ")
 			if err != nil {
 				return err
 			}
