@@ -108,16 +108,24 @@ func uploadDashboards(cfg *config) error {
 				if f.Title == dashboard.Properties.FolderTitle {
 					params.FolderID = f.ID
 					found = true
+					fmt.Printf("Found %d", f.ID)
 					break
 				}
 			}
 			if !found {
-				//TODO create folder
-				params.FolderID = 0
+				folder := sdk.Folder{
+					Title: dashboard.Properties.FolderTitle,
+				}
+				folder, err := client.CreateFolder(context.TODO(), folder)
+				if err != nil {
+					return err
+				}
+				params.FolderID = folder.ID
+				fmt.Printf("Created %d", folder.ID)
 			}
 		}
 
-		if _, err = client.DeleteDashboard(context.TODO(), dashboard.Dashboard.UpdateSlug()); err != nil {
+		if _, err = client.DeleteDashboardByUID(context.TODO(), dashboard.Dashboard.UID); err != nil {
 			log.Println(err)
 			continue
 		}

@@ -58,6 +58,9 @@ func fetchDashboards(cfg *config) error {
 			return err
 		}
 		for _, d := range dashboards {
+			if d.Type != "dash-db" {
+				continue
+			}
 			folder := filepath.Join(basepath, d.FolderUID)
 			err := lazyMkdir(folder)
 			if err != nil {

@@ -19,6 +19,7 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-test/deep"
 	"github.com/google/go-cmp/cmp"
@@ -26,10 +27,11 @@ import (
 )
 
 type dashboardDiff struct {
-	Source string `json:"source"`
-	UID    string `json:"uid"`
-	Action string `json:"action"`
-	Title  string `json:"title"`
+	Source string   `json:"source"`
+	UID    string   `json:"uid"`
+	Action string   `json:"action"`
+	Title  string   `json:"title"`
+	Tags   []string `json:"tags"`
 }
 
 type diff map[string][]dashboardDiff
@@ -66,6 +68,15 @@ func compareDashboards(cfg *config) error {
 					return err
 				}
 
+				tags := sanitizeTags(localDashboard.Dashboard.Tags)
+
+				for _, v := range tags {
+					// Ignore dashboards with WIP and local tag.
+					if v == "wip" || v == "local" {
+						return nil
+					}
+				}
+
 				var found bool
 				for _, d := range dashboards {
 					if d.UID == localDashboard.Dashboard.UID {
@@ -80,6 +91,7 @@ func compareDashboards(cfg *config) error {
 						Source: instance.Name,
 						UID:    localDashboard.Dashboard.UID,
 						Title:  localDashboard.Dashboard.Title,
+						Tags:   tags,
 					})
 					return nil
 				}
@@ -97,6 +109,7 @@ func compareDashboards(cfg *config) error {
 						Source: instance.Name,
 						UID:    localDashboard.Dashboard.UID,
 						Title:  localDashboard.Dashboard.Title,
+						Tags:   tags,
 					})
 				}
 
@@ -133,4 +146,12 @@ func equalDashboards(a, b FullDashboard) bool {
 		return false
 	}
 	return true
+}
+
+func sanitizeTags(tags []string) []string {
+	sanitizedTags := make([]string, len(tags))
+	for i, s := range tags {
+		sanitizedTags[i] = strings.TrimSpace(strings.ToLower(s))
+	}
+	return sanitizedTags
 }
