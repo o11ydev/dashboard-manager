@@ -70,13 +70,6 @@ func compareDashboards(cfg *config) error {
 
 				tags := sanitizeTags(localDashboard.Dashboard.Tags)
 
-				for _, v := range tags {
-					// Ignore dashboards with WIP and local tag.
-					if v == "wip" || v == "local" {
-						return nil
-					}
-				}
-
 				var found bool
 				for _, d := range dashboards {
 					if d.UID == localDashboard.Dashboard.UID {
