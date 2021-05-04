@@ -61,16 +61,15 @@ func fetchDashboards(cfg *config) error {
 			if d.Type != "dash-db" {
 				continue
 			}
-			folder := filepath.Join(basepath, d.FolderUID)
-			err := lazyMkdir(folder)
-			if err != nil {
-				return fmt.Errorf("error making directory for %s / %s: %w", instance.Name, d.FolderUID, err)
-			}
-			filePath := filepath.Join(folder, d.UID+".json")
+
 			board, props, err := client.GetDashboardByUID(context.TODO(), d.UID)
 			if err != nil {
 				return err
 			}
+			if !instance.shouldIncludeDashboard(board) {
+				continue
+			}
+
 			data, err := json.MarshalIndent(FullDashboard{
 				Dashboard:  board,
 				Properties: props,
@@ -78,6 +77,14 @@ func fetchDashboards(cfg *config) error {
 			if err != nil {
 				return err
 			}
+
+			folder := filepath.Join(basepath, d.FolderUID)
+			err = lazyMkdir(folder)
+			if err != nil {
+				return fmt.Errorf("error making directory for %s / %s: %w", instance.Name, d.FolderUID, err)
+			}
+
+			filePath := filepath.Join(folder, d.UID+".json")
 			err = ioutil.WriteFile(filePath, data, 0644)
 			if err != nil {
 				return err

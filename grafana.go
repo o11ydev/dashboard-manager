@@ -20,11 +20,12 @@ import (
 )
 
 type grafanaInstance struct {
-	Name            string `yaml:"name"`
-	URL             string `yaml:"url"`
-	Auth            string `yaml:"api_key"`
-	AuthFile        string `yaml:"api_key_file"`
-	PurgeDashboards bool   `yaml:"purge_dashboards"`
+	Name            string   `yaml:"name"`
+	URL             string   `yaml:"url"`
+	Auth            string   `yaml:"api_key"`
+	AuthFile        string   `yaml:"api_key_file"`
+	IncludeTags     []string `yaml:"include_tags"`
+	PurgeDashboards bool     `yaml:"purge_dashboards"`
 }
 
 func (g *grafanaInstance) client() (*sdk.Client, error) {
@@ -37,4 +38,19 @@ func (g *grafanaInstance) client() (*sdk.Client, error) {
 		auth = strings.TrimSpace(string(fileContent))
 	}
 	return sdk.NewClient(g.URL, auth, sdk.DefaultHTTPClient), nil
+}
+
+func (g *grafanaInstance) shouldIncludeDashboard(b sdk.Board) bool {
+	if len(g.IncludeTags) == 0 {
+		return true
+	}
+	for _, t := range b.Tags {
+		lt := strings.ToLower(t)
+		for _, i := range g.IncludeTags {
+			if strings.ToLower(i) == lt {
+				return true
+			}
+		}
+	}
+	return false
 }

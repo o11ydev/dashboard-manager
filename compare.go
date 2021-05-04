@@ -70,6 +70,10 @@ func compareDashboards(cfg *config) error {
 
 				tags := sanitizeTags(localDashboard.Dashboard.Tags)
 
+				if !outputInstance.shouldIncludeDashboard(localDashboard.Dashboard) {
+					return nil
+				}
+
 				var found bool
 				for _, d := range dashboards {
 					if d.UID == localDashboard.Dashboard.UID {
