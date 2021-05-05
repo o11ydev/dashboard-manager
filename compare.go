@@ -32,6 +32,7 @@ type dashboardDiff struct {
 	Action string   `json:"action"`
 	Title  string   `json:"title"`
 	Tags   []string `json:"tags"`
+	Diff   string   `json:"diff"`
 }
 
 type diff map[string][]dashboardDiff
@@ -82,7 +83,7 @@ func compareDashboards(cfg *config) error {
 					}
 				}
 				if !found {
-					fmt.Printf("dashboard %s is new\n", localDashboard.Dashboard.UID)
+					fmt.Printf("Dashboard %s (%s) is new.\n", localDashboard.Dashboard.Title, localDashboard.Dashboard.UID)
 					output[outputInstance.Name] = append(output[outputInstance.Name], dashboardDiff{
 						Action: "new",
 						Source: instance.Name,
@@ -100,13 +101,14 @@ func compareDashboards(cfg *config) error {
 
 				outputDashboard := FullDashboard{Dashboard: board, Properties: props}
 				if !equalDashboards(*localDashboard, outputDashboard) {
-					fmt.Printf("dashboard %s (%s) is different: %v\n", board.UID, board.Title, cmp.Diff(*localDashboard, outputDashboard))
+					fmt.Printf("Dashboard %s (%s) is different.\n", board.Title, board.UID)
 					output[outputInstance.Name] = append(output[outputInstance.Name], dashboardDiff{
 						Action: "modify",
 						Source: instance.Name,
 						UID:    localDashboard.Dashboard.UID,
 						Title:  localDashboard.Dashboard.Title,
 						Tags:   tags,
+						Diff:   cmp.Diff(*localDashboard, outputDashboard),
 					})
 				}
 
