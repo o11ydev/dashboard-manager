@@ -132,6 +132,7 @@ func equalDashboards(a, b FullDashboard) bool {
 	reset := func(i sdk.Board) sdk.Board {
 		i.ID = 0
 		i.Slug = ""
+		i.Version = 1
 		return i
 	}
 	dashboardA := reset(a.Dashboard)
