@@ -1,0 +1,22 @@
+before:
+  hooks:
+    - go mod download
+builds:
+- env:
+  - CGO_ENABLED=0
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+dockers:
+    - image_templates:
+      - "quay.io/inuits/{{.ProjectName}}:{{ .Tag }}"
+      - "quay.io/inuits/{{.ProjectName}}:v{{ .Major }}"
+      - "quay.io/inuits/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}"
+      - "quay.io/inuits/{{.ProjectName}}:latest"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
