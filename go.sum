@@ -38,8 +38,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be h1:ta7tUOvsPHVHGom5hKW5VXNc2xZIkfCKP8iaqOyYtUQ=
 github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be/go.mod h1:MIDFMn7db1kT65GmV94GzpX9Qdi7N/pQlwb+AN8wh+Q=
-github.com/roidelapluie/sdk v0.0.0-20210518154535-8fcf9c926457 h1:TUQnjJDAHrd3oH+wE7oKPdREV+I74E8E5bzcftoWExg=
-github.com/roidelapluie/sdk v0.0.0-20210518154535-8fcf9c926457/go.mod h1:uby+6hPUCRVNG/iAZKCOlaq5YhyK0oKMRke+FDesZdw=
+github.com/roidelapluie/sdk v0.0.0-20210519125852-43034e3aa213 h1:rCMwn7NzAPKs5WVpMBMkp7tPduOLY65+xlUi+CWhjXY=
+github.com/roidelapluie/sdk v0.0.0-20210519125852-43034e3aa213/go.mod h1:uby+6hPUCRVNG/iAZKCOlaq5YhyK0oKMRke+FDesZdw=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
