@@ -19,18 +19,17 @@ import (
 	"fmt"
 	"io/fs"
 	"io/ioutil"
-	"log"
 	"path/filepath"
 
 	"github.com/grafana-tools/sdk"
 )
 
-func uploadDashboards(cfg *config) error {
+func snapshotDashboards(cfg *config) error {
 	var inputInstance grafanaInstance
 	var outputInstance grafanaInstance
 	var found bool
 	for _, o := range cfg.Output {
-		if o.Name == *uploadOutput {
+		if o.Name == *snapshotOutput {
 			outputInstance = o
 			found = true
 			break
@@ -42,7 +41,7 @@ func uploadDashboards(cfg *config) error {
 
 	found = false
 	for _, i := range cfg.Input {
-		if i.Name == *uploadSource {
+		if i.Name == *snapshotSource {
 			inputInstance = i
 			found = true
 			break
@@ -58,7 +57,7 @@ func uploadDashboards(cfg *config) error {
 		return err
 	}
 
-	basepath := filepath.Join(*uploadDirectory, inputInstance.Name)
+	basepath := filepath.Join(*snapshotDirectory, inputInstance.Name)
 	dashboards := []*FullDashboard{}
 	err = filepath.Walk(basepath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
@@ -82,7 +81,7 @@ func uploadDashboards(cfg *config) error {
 	if err != nil {
 		return err
 	}
-	for _, dashboardUID := range *uploadDashboardsList {
+	for _, dashboardUID := range *snapshotDashboardsList {
 		var dashboard FullDashboard
 		var found bool
 		for _, d := range dashboards {
@@ -95,42 +94,15 @@ func uploadDashboards(cfg *config) error {
 			return fmt.Errorf("dasboard %s not found", dashboardUID)
 		}
 
-		params := sdk.SetDashboardParams{} //Overwrite: true}
-		if dashboard.Properties.FolderID == 0 {
-			params.FolderID = 0
-		} else {
-			folders, err := client.GetAllFolders(context.TODO())
-			if err != nil {
-				return err
-			}
-			var found bool
-			for _, f := range folders {
-				if f.Title == dashboard.Properties.FolderTitle {
-					params.FolderID = f.ID
-					found = true
-					break
-				}
-			}
-			if !found {
-				folder := sdk.Folder{
-					Title: dashboard.Properties.FolderTitle,
-				}
-				folder, err := client.CreateFolder(context.TODO(), folder)
-				if err != nil {
-					return err
-				}
-				params.FolderID = folder.ID
-			}
-		}
+		resp, err := client.CreateSnapshot(context.TODO(), sdk.CreateSnapshotRequest{
+			Expires:   uint(snapshotExpire.Seconds()),
+			Dashboard: dashboard.Dashboard,
+		})
 
-		if _, err = client.DeleteDashboardByUID(context.TODO(), dashboard.Dashboard.UID); err != nil {
-			log.Println(err)
-			continue
-		}
-		_, err = client.SetDashboard(context.TODO(), dashboard.Dashboard, params)
 		if err != nil {
-			return fmt.Errorf("error uploading %s: %v", dashboardUID, err)
+			return err
 		}
+		fmt.Printf("%s\n", *resp.URL)
 	}
 	return nil
 }

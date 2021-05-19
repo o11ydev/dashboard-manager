@@ -37,6 +37,13 @@ var (
 	uploadSource         = upload.Flag("input-instance", "Name of the output instance").Required().String()
 	uploadOutput         = upload.Flag("output-instance", "Name of the output instance").Required().String()
 	uploadDashboardsList = upload.Flag("dashboards", "Dashboards to upload").Required().Strings()
+
+	snapshot               = app.Command("snapshot", "Upload snapshots.")
+	snapshotDirectory      = snapshot.Flag("dashboards-directory", "Directory where the dashboards were fetched.").Required().String()
+	snapshotSource         = snapshot.Flag("input-instance", "Name of the output instance").Required().String()
+	snapshotOutput         = snapshot.Flag("output-instance", "Name of the output instance").Required().String()
+	snapshotDashboardsList = snapshot.Flag("dashboards", "Dashboards to snapshot").Required().Strings()
+	snapshotExpire         = snapshot.Flag("expire", "Expiration time").Default("1h").Duration()
 )
 
 type gitConfig struct {
@@ -76,6 +83,15 @@ func main() {
 			log.Fatal(err)
 		}
 		err = uploadDashboards(cfg)
+		if err != nil {
+			log.Fatal(err)
+		}
+	case snapshot.FullCommand():
+		cfg, err := loadConfig(*configFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = snapshotDashboards(cfg)
 		if err != nil {
 			log.Fatal(err)
 		}
