@@ -64,7 +64,7 @@ func fetchDashboards(cfg *config) error {
 
 			board, props, err := client.GetDashboardByUID(context.TODO(), d.UID)
 			if err != nil {
-				return err
+				return fmt.Errorf("error getching %s: %w", d.UID, err)
 			}
 			if !instance.shouldIncludeDashboard(board) {
 				continue
