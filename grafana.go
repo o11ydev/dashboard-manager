@@ -37,7 +37,7 @@ func (g *grafanaInstance) client() (*sdk.Client, error) {
 		}
 		auth = strings.TrimSpace(string(fileContent))
 	}
-	return sdk.NewClient(g.URL, auth, sdk.DefaultHTTPClient), nil
+	return sdk.NewClient(g.URL, auth, sdk.DefaultHTTPClient)
 }
 
 func (g *grafanaInstance) shouldIncludeDashboard(b sdk.Board) bool {
