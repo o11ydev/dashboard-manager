@@ -15,4 +15,4 @@ require (
 	gopkg.in/yaml.v2 v2.2.4
 )
 
-replace github.com/grafana-tools/sdk => github.com/roidelapluie/sdk v0.0.0-20210922093635-5b34c6c6005d
+replace github.com/grafana-tools/sdk => github.com/roidelapluie/sdk v0.0.0-20210922095507-6cd05eb9dab5
