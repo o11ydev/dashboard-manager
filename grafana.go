@@ -16,7 +16,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/grafana-tools/sdk"
+	"github.com/roidelapluie/sdk"
 )
 
 type grafanaInstance struct {

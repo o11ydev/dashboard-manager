@@ -23,7 +23,7 @@ import (
 
 	"github.com/go-test/deep"
 	"github.com/google/go-cmp/cmp"
-	"github.com/grafana-tools/sdk"
+	"github.com/roidelapluie/sdk"
 )
 
 type dashboardDiff struct {

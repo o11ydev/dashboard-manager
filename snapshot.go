@@ -21,7 +21,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/grafana-tools/sdk"
+	"github.com/roidelapluie/sdk"
 )
 
 func snapshotDashboards(cfg *config) error {

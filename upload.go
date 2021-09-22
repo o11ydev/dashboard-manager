@@ -22,7 +22,7 @@ import (
 	"log"
 	"path/filepath"
 
-	"github.com/grafana-tools/sdk"
+	"github.com/roidelapluie/sdk"
 )
 
 func uploadDashboards(cfg *config) error {

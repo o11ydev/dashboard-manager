@@ -20,7 +20,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/grafana-tools/sdk"
+	"github.com/roidelapluie/sdk"
 )
 
 func lazyMkdir(path string) error {
