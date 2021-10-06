@@ -104,6 +104,6 @@ func loadConfig(configFile string) (*config, error) {
 		return nil, err
 	}
 	cfg := &config{}
-	err = yaml.Unmarshal(data, cfg)
+	err = yaml.UnmarshalStrict(data, cfg)
 	return cfg, err
 }

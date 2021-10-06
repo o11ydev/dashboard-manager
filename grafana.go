@@ -16,16 +16,18 @@ import (
 	"io/ioutil"
 	"strings"
 
+	promcfg "github.com/prometheus/common/config"
 	"github.com/roidelapluie/sdk"
 )
 
 type grafanaInstance struct {
-	Name            string   `yaml:"name"`
-	URL             string   `yaml:"url"`
-	Auth            string   `yaml:"api_key"`
-	AuthFile        string   `yaml:"api_key_file"`
-	IncludeTags     []string `yaml:"include_tags"`
-	PurgeDashboards bool     `yaml:"purge_dashboards"`
+	Name            string                   `yaml:"name"`
+	URL             string                   `yaml:"url"`
+	Auth            string                   `yaml:"api_key"`
+	AuthFile        string                   `yaml:"api_key_file"`
+	IncludeTags     []string                 `yaml:"include_tags"`
+	PurgeDashboards bool                     `yaml:"purge_dashboards"`
+	HttpClient      promcfg.HTTPClientConfig `yaml:"http_client"`
 }
 
 func (g *grafanaInstance) client() (*sdk.Client, error) {
@@ -37,7 +39,11 @@ func (g *grafanaInstance) client() (*sdk.Client, error) {
 		}
 		auth = strings.TrimSpace(string(fileContent))
 	}
-	return sdk.NewClient(g.URL, auth, sdk.DefaultHTTPClient)
+	client, err := promcfg.NewClientFromConfig(g.HttpClient, "grafana")
+	if err != nil {
+		return nil, err
+	}
+	return sdk.NewClient(g.URL, auth, client)
 }
 
 func (g *grafanaInstance) shouldIncludeDashboard(b sdk.Board) bool {
