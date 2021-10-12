@@ -204,12 +204,10 @@ github.com/prometheus/procfs v0.6.0 h1:mxy4L2jP6qMonqmq+aTtOx1ifVWUgG/TAmntgbh3x
 github.com/prometheus/procfs v0.6.0/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
 github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be/go.mod h1:MIDFMn7db1kT65GmV94GzpX9Qdi7N/pQlwb+AN8wh+Q=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
-github.com/roidelapluie/sdk v0.0.0-20211006115211-1c301085d36f h1:xSeJN7hZY3rodT3jSCrh9mPkAHucptZrNKFGy0RKCOI=
-github.com/roidelapluie/sdk v0.0.0-20211006115211-1c301085d36f/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
-github.com/roidelapluie/sdk v0.0.0-20211012121752-7802636dc991 h1:mEsPMbHChVfUeirUyV3MbAhlNURSZHZc1iSx1+upIeQ=
-github.com/roidelapluie/sdk v0.0.0-20211012121752-7802636dc991/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
-github.com/roidelapluie/sdk v0.0.0-20211012122343-8c74a17dd11d h1:KoLCQSb45dI0opDWd1Nnoioa0BVshSsA1DK7YTBi39c=
-github.com/roidelapluie/sdk v0.0.0-20211012122343-8c74a17dd11d/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
+github.com/roidelapluie/sdk v0.0.0-20211012134727-44a041568857 h1:C2uc6sfSchhJexVphiR9kVmf8PHHrNPDhLscQ4l8Qj4=
+github.com/roidelapluie/sdk v0.0.0-20211012134727-44a041568857/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
+github.com/roidelapluie/sdk v0.0.0-20211012135139-14706075d1fa h1:kIqisRRaIU2qLP219xCI5Qkb3yRxBiE3o3if+zbsRQo=
+github.com/roidelapluie/sdk v0.0.0-20211012135139-14706075d1fa/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.6.0/go.mod h1:7uNnSEd1DgxDLC74fIahvMZmmYsHGZGEOFrfsX/uA88=
