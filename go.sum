@@ -206,6 +206,10 @@ github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be/go.mod h1:MIDF
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/roidelapluie/sdk v0.0.0-20211006115211-1c301085d36f h1:xSeJN7hZY3rodT3jSCrh9mPkAHucptZrNKFGy0RKCOI=
 github.com/roidelapluie/sdk v0.0.0-20211006115211-1c301085d36f/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
+github.com/roidelapluie/sdk v0.0.0-20211012121752-7802636dc991 h1:mEsPMbHChVfUeirUyV3MbAhlNURSZHZc1iSx1+upIeQ=
+github.com/roidelapluie/sdk v0.0.0-20211012121752-7802636dc991/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
+github.com/roidelapluie/sdk v0.0.0-20211012122343-8c74a17dd11d h1:KoLCQSb45dI0opDWd1Nnoioa0BVshSsA1DK7YTBi39c=
+github.com/roidelapluie/sdk v0.0.0-20211012122343-8c74a17dd11d/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.6.0/go.mod h1:7uNnSEd1DgxDLC74fIahvMZmmYsHGZGEOFrfsX/uA88=
