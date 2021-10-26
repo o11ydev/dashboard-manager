@@ -140,6 +140,8 @@ github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5m
 github.com/gosimple/slug v1.1.1/go.mod h1:ER78kgg1Mv0NQGlXiDe57DpCyfbNywXXZ9mIorhxAf0=
 github.com/gosimple/slug v1.10.0 h1:3XbiQua1IpCdrvuntWvGBxVm+K99wCSxJjlxkP49GGQ=
 github.com/gosimple/slug v1.10.0/go.mod h1:MICb3w495l9KNdZm+Xn5b6T2Hn831f9DMxiJ1r+bAjw=
+github.com/gosimple/slug v1.11.0 h1:QkFeOkXIEDvvtIt++P7cUuO4G9PZVQEgLuYbYZzawMA=
+github.com/gosimple/slug v1.11.0/go.mod h1:MICb3w495l9KNdZm+Xn5b6T2Hn831f9DMxiJ1r+bAjw=
 github.com/gosimple/unidecode v1.0.0 h1:kPdvM+qy0tnk4/BrnkrbdJ82xe88xn7c9hcaipDz4dQ=
 github.com/gosimple/unidecode v1.0.0/go.mod h1:CP0Cr1Y1kogOtx0bJblKzsVWrqYaqfNOnHzpgWw4Awc=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
@@ -208,6 +210,8 @@ github.com/roidelapluie/sdk v0.0.0-20211012134727-44a041568857 h1:C2uc6sfSchhJex
 github.com/roidelapluie/sdk v0.0.0-20211012134727-44a041568857/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
 github.com/roidelapluie/sdk v0.0.0-20211012135139-14706075d1fa h1:kIqisRRaIU2qLP219xCI5Qkb3yRxBiE3o3if+zbsRQo=
 github.com/roidelapluie/sdk v0.0.0-20211012135139-14706075d1fa/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
+github.com/roidelapluie/sdk v0.0.0-20211026120645-13f4496b7e97 h1:rLItzOsmAFZMjEP4CK6SHLmq0m9iYefaOYkTTcGbXMA=
+github.com/roidelapluie/sdk v0.0.0-20211026120645-13f4496b7e97/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.6.0/go.mod h1:7uNnSEd1DgxDLC74fIahvMZmmYsHGZGEOFrfsX/uA88=
