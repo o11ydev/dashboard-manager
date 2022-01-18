@@ -8,7 +8,7 @@ require (
 	github.com/google/go-cmp v0.5.5
 	github.com/gosimple/slug v1.11.2 // indirect
 	github.com/prometheus/common v0.31.1
-	github.com/roidelapluie/sdk v0.0.0-20211207110130-97aac89f3a7c
+	github.com/roidelapluie/sdk v0.0.0-20220118095231-2c738800da34
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/yaml.v2 v2.4.0
 )

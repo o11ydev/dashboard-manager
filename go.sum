@@ -206,6 +206,8 @@ github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be/go.mod h1:MIDF
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/roidelapluie/sdk v0.0.0-20211207110130-97aac89f3a7c h1:eHXugPn4Z4IB3fh2DNQAPeUY1IYCIQH9CWib4QsPcyw=
 github.com/roidelapluie/sdk v0.0.0-20211207110130-97aac89f3a7c/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
+github.com/roidelapluie/sdk v0.0.0-20220118095231-2c738800da34 h1:8NDPMF9E6S4h6MY6JvzUYQsUC6KvPX+DAe4k2R+M79E=
+github.com/roidelapluie/sdk v0.0.0-20220118095231-2c738800da34/go.mod h1:v8iezxFhEJEMXLSEztbKWGjfRey3+l75VXKBsL6t3ZA=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.6.0/go.mod h1:7uNnSEd1DgxDLC74fIahvMZmmYsHGZGEOFrfsX/uA88=
