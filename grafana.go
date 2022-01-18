@@ -13,11 +13,12 @@
 package main
 
 import (
+	"errors"
 	"io/ioutil"
 	"strings"
 
+	gsdk "github.com/grafana/grafana-api-golang-client"
 	promcfg "github.com/prometheus/common/config"
-	"github.com/roidelapluie/sdk"
 )
 
 type grafanaInstance struct {
@@ -30,7 +31,7 @@ type grafanaInstance struct {
 	HttpClient      promcfg.HTTPClientConfig `yaml:"http_client"`
 }
 
-func (g *grafanaInstance) client() (*sdk.Client, error) {
+func (g *grafanaInstance) client() (*gsdk.Client, error) {
 	auth := g.Auth
 	if g.AuthFile != "" {
 		fileContent, err := ioutil.ReadFile(g.AuthFile)
@@ -43,14 +44,17 @@ func (g *grafanaInstance) client() (*sdk.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return sdk.NewClient(g.URL, auth, client)
+	return gsdk.New(g.URL, gsdk.Config{
+		APIKey: auth,
+		Client: client,
+	})
 }
 
-func (g *grafanaInstance) shouldIncludeDashboard(b sdk.Board) bool {
+func (g *grafanaInstance) shouldIncludeDashboard(b *gsdk.Dashboard) bool {
 	if len(g.IncludeTags) == 0 {
 		return true
 	}
-	for _, t := range b.Tags {
+	for _, t := range b.Model["tags"].([]string) {
 		lt := strings.ToLower(t)
 		for _, i := range g.IncludeTags {
 			if strings.ToLower(i) == lt {
@@ -59,4 +63,25 @@ func (g *grafanaInstance) shouldIncludeDashboard(b sdk.Board) bool {
 		}
 	}
 	return false
+}
+
+func getTags(b *gsdk.Dashboard) []string {
+	if tags, ok := b.Model["tags"].([]string); ok {
+		return tags
+	}
+	return nil
+}
+
+func getUID(b *gsdk.Dashboard) (string, error) {
+	if uid, ok := b.Model["uid"].(string); ok {
+		return uid, nil
+	}
+	return "", errors.New("No UID for dashboard")
+}
+
+func getTitle(b *gsdk.Dashboard) (string, error) {
+	if uid, ok := b.Model["title"].(string); ok {
+		return uid, nil
+	}
+	return "", errors.New("No title for dashboard")
 }

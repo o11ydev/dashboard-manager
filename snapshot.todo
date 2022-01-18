@@ -85,7 +85,11 @@ func snapshotDashboards(cfg *config) error {
 		var dashboard FullDashboard
 		var found bool
 		for _, d := range dashboards {
-			if d.Dashboard.UID == dashboardUID {
+			uid, err := getUID(d.Dashboard)
+			if err != nil {
+				return err
+			}
+			if uid == dashboardUID {
 				dashboard = *d
 				found = true
 			}

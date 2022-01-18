@@ -13,16 +13,12 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
-	"log"
 	"path/filepath"
-
-	"github.com/roidelapluie/sdk"
 )
 
 func uploadDashboards(cfg *config) error {
@@ -86,48 +82,48 @@ func uploadDashboards(cfg *config) error {
 		var dashboard FullDashboard
 		var found bool
 		for _, d := range dashboards {
-			if d.Dashboard.UID == dashboardUID {
+			uid, err := getUID(d.Dashboard)
+			if err != nil {
+				return err
+			}
+			if uid == dashboardUID {
 				dashboard = *d
 				found = true
 			}
 		}
 		if !found {
-			return fmt.Errorf("dasboard %s not found", dashboardUID)
+			return fmt.Errorf("dashboard %s not found", dashboardUID)
 		}
 
-		params := sdk.SetDashboardParams{} //Overwrite: true}
-		if dashboard.Properties.FolderID == 0 {
-			params.FolderID = 0
-		} else {
-			folders, err := client.GetAllFolders(context.TODO())
+		if dashboard.Folder != nil && dashboard.Folder.ID != 0 {
+			folders, err := client.Folders()
 			if err != nil {
 				return err
 			}
 			var found bool
 			for _, f := range folders {
-				if f.Title == dashboard.Properties.FolderTitle {
-					params.FolderID = f.ID
+				if f.Title == dashboard.Folder.Title {
+					dashboard.Dashboard.Meta.Folder = f.ID
+					dashboard.Dashboard.Folder = f.ID
 					found = true
 					break
 				}
 			}
 			if !found {
-				folder := sdk.Folder{
-					Title: dashboard.Properties.FolderTitle,
-				}
-				folder, err := client.CreateFolder(context.TODO(), folder)
+				folder, err := client.NewFolder(dashboard.Folder.Title)
 				if err != nil {
 					return err
 				}
-				params.FolderID = folder.ID
+				dashboard.Dashboard.Meta.Folder = folder.ID
+				dashboard.Dashboard.Folder = folder.ID
+				dashboard.Dashboard.Meta.Slug = ""
 			}
 		}
 
-		if _, err = client.DeleteDashboardByUID(context.TODO(), dashboard.Dashboard.UID); err != nil {
-			log.Println(err)
-			continue
-		}
-		_, err = client.SetDashboard(context.TODO(), dashboard.Dashboard, params)
+		dashboard.Dashboard.Model["id"] = 0
+		dashboard.Dashboard.Overwrite = true
+
+		_, err = client.NewDashboard(*dashboard.Dashboard)
 		if err != nil {
 			return fmt.Errorf("error uploading %s: %v", dashboardUID, err)
 		}

@@ -13,14 +13,13 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/roidelapluie/sdk"
+	gsdk "github.com/grafana/grafana-api-golang-client"
 )
 
 func lazyMkdir(path string) error {
@@ -32,8 +31,8 @@ func lazyMkdir(path string) error {
 }
 
 type FullDashboard struct {
-	Dashboard  sdk.Board           `json:"board"`
-	Properties sdk.BoardProperties `json:"properties"`
+	Dashboard *gsdk.Dashboard `json:"board"`
+	Folder    *gsdk.Folder
 }
 
 func fetchDashboards(cfg *config) error {
@@ -53,38 +52,40 @@ func fetchDashboards(cfg *config) error {
 			return fmt.Errorf("error making directory for %s: %w", instance.Name, err)
 		}
 
-		dashboards, err := client.Search(context.TODO())
+		dashboards, err := client.Dashboards()
 		if err != nil {
 			return err
 		}
 		for _, d := range dashboards {
-			if d.Type != "dash-db" {
-				continue
-			}
-
-			board, props, err := client.GetDashboardByUID(context.TODO(), d.UID)
+			board, err := client.DashboardByUID(d.UID)
 			if err != nil {
 				return fmt.Errorf("error fetching %s: %w", d.UID, err)
 			}
+
 			if !instance.shouldIncludeDashboard(board) {
 				continue
 			}
 
+			folder, err := client.Folder(board.Meta.Folder)
+			if err != nil {
+				return fmt.Errorf("error fetching folder %d: %w", board.Meta.Folder, err)
+			}
+
 			data, err := json.MarshalIndent(FullDashboard{
-				Dashboard:  board,
-				Properties: props,
+				Dashboard: board,
+				Folder:    folder,
 			}, "", " ")
 			if err != nil {
 				return err
 			}
 
-			folder := filepath.Join(basepath, d.FolderUID)
-			err = lazyMkdir(folder)
+			folderPath := filepath.Join(basepath, folder.UID)
+			err = lazyMkdir(folderPath)
 			if err != nil {
 				return fmt.Errorf("error making directory for %s / %s: %w", instance.Name, d.FolderUID, err)
 			}
 
-			filePath := filepath.Join(folder, d.UID+".json")
+			filePath := filepath.Join(folderPath, d.UID+".json")
 			err = ioutil.WriteFile(filePath, data, 0644)
 			if err != nil {
 				return err

@@ -13,7 +13,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/fs"
@@ -23,7 +22,7 @@ import (
 
 	"github.com/go-test/deep"
 	"github.com/google/go-cmp/cmp"
-	"github.com/roidelapluie/sdk"
+	gsdk "github.com/grafana/grafana-api-golang-client"
 )
 
 type dashboardDiff struct {
@@ -45,7 +44,7 @@ func compareDashboards(cfg *config) error {
 		if err != nil {
 			return err
 		}
-		dashboards, err := client.Search(context.TODO())
+		dashboards, err := client.Dashboards()
 		if err != nil {
 			return err
 		}
@@ -69,7 +68,7 @@ func compareDashboards(cfg *config) error {
 					return err
 				}
 
-				tags := sanitizeTags(localDashboard.Dashboard.Tags)
+				tags := sanitizeTags(getTags(localDashboard.Dashboard))
 
 				if !outputInstance.shouldIncludeDashboard(localDashboard.Dashboard) {
 					return nil
@@ -77,36 +76,61 @@ func compareDashboards(cfg *config) error {
 
 				var found bool
 				for _, d := range dashboards {
-					if d.UID == localDashboard.Dashboard.UID {
+					uid, err := getUID(localDashboard.Dashboard)
+					if err != nil {
+						return err
+					}
+					if d.UID == uid {
 						found = true
 						break
 					}
 				}
 				if !found {
-					fmt.Printf("Dashboard %s (%s) is new.\n", localDashboard.Dashboard.Title, localDashboard.Dashboard.UID)
+					title, err := getTitle(localDashboard.Dashboard)
+					if err != nil {
+						return err
+					}
+					uid, err := getUID(localDashboard.Dashboard)
+					if err != nil {
+						return err
+					}
+
+					fmt.Printf("Dashboard %s (%s) is new.\n", title, uid)
 					output[outputInstance.Name] = append(output[outputInstance.Name], dashboardDiff{
 						Action: "new",
 						Source: instance.Name,
-						UID:    localDashboard.Dashboard.UID,
-						Title:  localDashboard.Dashboard.Title,
+						UID:    uid,
+						Title:  title,
 						Tags:   tags,
 					})
 					return nil
 				}
 
-				board, props, err := client.GetDashboardByUID(context.TODO(), localDashboard.Dashboard.UID)
+				uid, err := getUID(localDashboard.Dashboard)
+				if err != nil {
+					return err
+				}
+				title, err := getTitle(localDashboard.Dashboard)
+				if err != nil {
+					return err
+				}
+				board, err := client.DashboardByUID(uid)
+				if err != nil {
+					return err
+				}
+				folder, err := client.Folder(board.Meta.Folder)
 				if err != nil {
 					return err
 				}
 
-				outputDashboard := FullDashboard{Dashboard: board, Properties: props}
+				outputDashboard := FullDashboard{Dashboard: board, Folder: folder}
 				if !equalDashboards(*localDashboard, outputDashboard) {
-					fmt.Printf("Dashboard %s (%s) is different.\n", board.Title, board.UID)
+					fmt.Printf("Dashboard %s (%s) is different.\n", title, uid)
 					output[outputInstance.Name] = append(output[outputInstance.Name], dashboardDiff{
 						Action: "modify",
 						Source: instance.Name,
-						UID:    localDashboard.Dashboard.UID,
-						Title:  localDashboard.Dashboard.Title,
+						UID:    uid,
+						Title:  title,
 						Tags:   tags,
 						Diff:   cmp.Diff(*localDashboard, outputDashboard),
 					})
@@ -131,18 +155,18 @@ func compareDashboards(cfg *config) error {
 }
 
 func equalDashboards(a, b FullDashboard) bool {
-	reset := func(i sdk.Board) sdk.Board {
-		i.ID = 0
-		i.Slug = ""
-		i.Version = 1
+	reset := func(i gsdk.Dashboard) gsdk.Dashboard {
+		i.Model["id"] = 0
+		i.Model["slug"] = ""
+		i.Model["version"] = 1
 		return i
 	}
-	dashboardA := reset(a.Dashboard)
-	dashboardB := reset(b.Dashboard)
-	if diff := deep.Equal(dashboardA, dashboardB); diff != nil {
+	dashboardA := reset(*a.Dashboard)
+	dashboardB := reset(*b.Dashboard)
+	if diff := deep.Equal(dashboardA.Model, dashboardB.Model); diff != nil {
 		return false
 	}
-	if a.Properties.FolderTitle != b.Properties.FolderTitle {
+	if a.Folder.Title != b.Folder.Title {
 		return false
 	}
 	return true
