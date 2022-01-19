@@ -46,3 +46,8 @@ Commands:
   snapshot --dashboards-directory=DASHBOARDS-DIRECTORY --input-instance=INPUT-INSTANCE --output-instance=OUTPUT-INSTANCE --dashboards=DASHBOARDS [<flags>]
     Upload snapshots.
 ```
+
+## Grafana 8.3 notes
+
+If you use Grafana 8.3+, you need to use admin tokens, because dashboard manager
+needs to replace datasources UID's in dashboards. You also need dashboard-manager >= 0.0.26.
