@@ -15,6 +15,7 @@ package main
 import (
 	"errors"
 	"io/ioutil"
+	"reflect"
 	"strings"
 
 	gsdk "github.com/grafana/grafana-api-golang-client"
@@ -84,4 +85,92 @@ func getTitle(b *gsdk.Dashboard) (string, error) {
 		return uid, nil
 	}
 	return "", errors.New("No title for dashboard")
+}
+
+func extractDS(v reflect.Value) []string {
+	var output []string
+	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
+	switch v.Kind() {
+	case reflect.Array, reflect.Slice:
+		for i := 0; i < v.Len(); i++ {
+			output = append(output, extractDS(v.Index(i))...)
+		}
+	case reflect.Map:
+		for _, k := range v.MapKeys() {
+			innerVal := v.MapIndex(k)
+			output = append(output, extractDS(innerVal)...)
+			if k.String() == "datasource" && innerVal.Kind() == reflect.Interface {
+				innerInt := innerVal.Interface()
+				if v, ok := innerInt.(map[string]interface{}); ok {
+					if uid, ok := v["uid"]; ok {
+						uidstr := uid.(string)
+						if !strings.HasPrefix(uidstr, "-- ") {
+							output = append(output, uidstr)
+						}
+					}
+				}
+			}
+		}
+	default:
+	}
+
+	keys := make(map[string]bool)
+	var list []string
+	for _, item := range output {
+		if _, value := keys[item]; !value {
+			list = append(list, item)
+			keys[item] = true
+		}
+	}
+	return list
+}
+
+func changeDS(v reflect.Value, equiv map[string]string) {
+	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
+	switch v.Kind() {
+	case reflect.Array, reflect.Slice:
+		for i := 0; i < v.Len(); i++ {
+			changeDS(v.Index(i), equiv)
+		}
+	case reflect.Map:
+		for _, k := range v.MapKeys() {
+			innerVal := v.MapIndex(k)
+			changeDS(innerVal, equiv)
+			if k.String() == "datasource" && innerVal.Kind() == reflect.Interface {
+				innerInt := innerVal.Interface()
+				if v, ok := innerInt.(map[string]interface{}); ok {
+					if uid, ok := v["uid"]; ok {
+						uidstr := uid.(string)
+						if !strings.HasPrefix(uidstr, "-- ") {
+							if newUID, ok := equiv[uidstr]; ok {
+								v["uid"] = newUID
+							}
+						}
+					}
+				}
+			}
+		}
+	default:
+	}
+}
+
+func getDatasources(b *gsdk.Dashboard) []string {
+	return extractDS(reflect.ValueOf(b.Model))
+}
+
+func changeDatasources(b *gsdk.Dashboard, in, out []*gsdk.DataSource) {
+	equiv := make(map[string]string)
+	for _, inv := range in {
+		for _, outv := range out {
+			if inv.Name == outv.Name && inv.Type == outv.Type {
+				equiv[inv.UID] = outv.UID
+			}
+		}
+	}
+
+	changeDS(reflect.ValueOf(b.Model), equiv)
 }

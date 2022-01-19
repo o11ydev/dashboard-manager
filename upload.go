@@ -19,6 +19,8 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"path/filepath"
+
+	gsdk "github.com/grafana/grafana-api-golang-client"
 )
 
 func uploadDashboards(cfg *config) error {
@@ -52,6 +54,15 @@ func uploadDashboards(cfg *config) error {
 	client, err := outputInstance.client()
 	if err != nil {
 		return err
+	}
+
+	clientDS := []*gsdk.DataSource{}
+	// Hard code limit to 50 for now.
+	for i := int64(0); i < 50; i++ {
+		ds, err := client.DataSource(i)
+		if err == nil {
+			clientDS = append(clientDS, ds)
+		}
 	}
 
 	basepath := filepath.Join(*uploadDirectory, inputInstance.Name)
@@ -122,6 +133,8 @@ func uploadDashboards(cfg *config) error {
 
 		dashboard.Dashboard.Model["id"] = 0
 		dashboard.Dashboard.Overwrite = true
+
+		changeDatasources(dashboard.Dashboard, dashboard.Datasources, clientDS)
 
 		_, err = client.NewDashboard(*dashboard.Dashboard)
 		if err != nil {

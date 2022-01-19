@@ -31,8 +31,9 @@ func lazyMkdir(path string) error {
 }
 
 type FullDashboard struct {
-	Dashboard *gsdk.Dashboard `json:"board"`
-	Folder    *gsdk.Folder
+	Dashboard   *gsdk.Dashboard `json:"board"`
+	Datasources []*gsdk.DataSource
+	Folder      *gsdk.Folder
 }
 
 func fetchDashboards(cfg *config) error {
@@ -56,6 +57,16 @@ func fetchDashboards(cfg *config) error {
 		if err != nil {
 			return err
 		}
+
+		clientDS := []*gsdk.DataSource{}
+		// Hard code limit to 50 for now.
+		for i := int64(0); i < 50; i++ {
+			ds, err := client.DataSource(i)
+			if err == nil {
+				clientDS = append(clientDS, ds)
+			}
+		}
+
 		for _, d := range dashboards {
 			board, err := client.DashboardByUID(d.UID)
 			if err != nil {
@@ -71,9 +82,24 @@ func fetchDashboards(cfg *config) error {
 				return fmt.Errorf("error fetching folder %d: %w", board.Meta.Folder, err)
 			}
 
+			dashboardDS := []*gsdk.DataSource{}
+			datasources := getDatasources(board)
+			for _, ds := range clientDS {
+				for _, v := range datasources {
+					if ds.UID == v {
+						dashboardDS = append(dashboardDS, &gsdk.DataSource{
+							UID:  ds.UID,
+							Type: ds.Type,
+							Name: ds.Name,
+						})
+					}
+				}
+			}
+
 			data, err := json.MarshalIndent(FullDashboard{
-				Dashboard: board,
-				Folder:    folder,
+				Dashboard:   board,
+				Folder:      folder,
+				Datasources: dashboardDS,
 			}, "", " ")
 			if err != nil {
 				return err
