@@ -13,3 +13,5 @@ require (
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/yaml.v2 v2.4.0
 )
+
+replace github.com/grafana/grafana-api-golang-client => github.com/roidelapluie/grafana-api-golang-client v0.2.7-0.20220202092727-748d6e86d215

@@ -13,7 +13,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,7 +20,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/roidelapluie/sdk"
+	gsdk "github.com/grafana/grafana-api-golang-client"
 )
 
 func snapshotDashboards(cfg *config) error {
@@ -98,15 +97,15 @@ func snapshotDashboards(cfg *config) error {
 			return fmt.Errorf("dasboard %s not found", dashboardUID)
 		}
 
-		resp, err := client.CreateSnapshot(context.TODO(), sdk.CreateSnapshotRequest{
-			Expires:   uint(snapshotExpire.Seconds()),
-			Dashboard: dashboard.Dashboard,
+		resp, err := client.NewSnapshot(gsdk.Snapshot{
+			Expires: int64(snapshotExpire.Seconds()),
+			Model:   dashboard.Dashboard.Model,
 		})
 
 		if err != nil {
 			return err
 		}
-		fmt.Printf("%s\n", *resp.URL)
+		fmt.Printf("%s\n", resp.URL)
 	}
 	return nil
 }

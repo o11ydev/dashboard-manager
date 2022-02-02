@@ -87,15 +87,14 @@ func main() {
 			log.Fatal(err)
 		}
 	case snapshot.FullCommand():
-		_, err := loadConfig(*configFile)
+		cfg, err := loadConfig(*configFile)
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println("Snapshots are not implemented yet.")
-		//err = snapshotDashboards(cfg)
-		//if err != nil {
-		//	log.Fatal(err)
-		//}
+		err = snapshotDashboards(cfg)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
