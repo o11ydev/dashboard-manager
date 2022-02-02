@@ -80,6 +80,16 @@ func snapshotDashboards(cfg *config) error {
 	if err != nil {
 		return err
 	}
+
+	clientDS := []*gsdk.DataSource{}
+	// Hard code limit to 50 for now.
+	for i := int64(0); i < 50; i++ {
+		ds, err := client.DataSource(i)
+		if err == nil {
+			clientDS = append(clientDS, ds)
+		}
+	}
+
 	for _, dashboardUID := range *snapshotDashboardsList {
 		var dashboard FullDashboard
 		var found bool
@@ -96,6 +106,8 @@ func snapshotDashboards(cfg *config) error {
 		if !found {
 			return fmt.Errorf("dasboard %s not found", dashboardUID)
 		}
+
+		changeDatasources(dashboard.Dashboard, dashboard.Datasources, clientDS)
 
 		resp, err := client.NewSnapshot(gsdk.Snapshot{
 			Expires: int64(snapshotExpire.Seconds()),
