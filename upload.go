@@ -20,7 +20,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	gsdk "github.com/grafana/grafana-api-golang-client"
+	gapi "github.com/grafana/grafana-api-golang-client"
 )
 
 func uploadDashboards(cfg *config) error {
@@ -56,7 +56,7 @@ func uploadDashboards(cfg *config) error {
 		return err
 	}
 
-	clientDS := []*gsdk.DataSource{}
+	clientDS := []*gapi.DataSource{}
 	// Hard code limit to 50 for now.
 	for i := int64(0); i < 50; i++ {
 		ds, err := client.DataSource(i)

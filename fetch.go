@@ -19,7 +19,7 @@ import (
 	"os"
 	"path/filepath"
 
-	gsdk "github.com/grafana/grafana-api-golang-client"
+	gapi "github.com/grafana/grafana-api-golang-client"
 )
 
 func lazyMkdir(path string) error {
@@ -31,9 +31,9 @@ func lazyMkdir(path string) error {
 }
 
 type FullDashboard struct {
-	Dashboard   *gsdk.Dashboard `json:"board"`
-	Datasources []*gsdk.DataSource
-	Folder      *gsdk.Folder
+	Dashboard   *gapi.Dashboard `json:"board"`
+	Datasources []*gapi.DataSource
+	Folder      *gapi.Folder
 }
 
 func fetchDashboards(cfg *config) error {
@@ -58,7 +58,7 @@ func fetchDashboards(cfg *config) error {
 			return err
 		}
 
-		clientDS := []*gsdk.DataSource{}
+		clientDS := []*gapi.DataSource{}
 		// Hard code limit to 50 for now.
 		for i := int64(0); i < 50; i++ {
 			ds, err := client.DataSource(i)
@@ -82,12 +82,12 @@ func fetchDashboards(cfg *config) error {
 				return fmt.Errorf("error fetching folder %d: %w", board.Meta.Folder, err)
 			}
 
-			dashboardDS := []*gsdk.DataSource{}
+			dashboardDS := []*gapi.DataSource{}
 			datasources := getDatasources(board)
 			for _, ds := range clientDS {
 				for _, v := range datasources {
 					if ds.UID == v {
-						dashboardDS = append(dashboardDS, &gsdk.DataSource{
+						dashboardDS = append(dashboardDS, &gapi.DataSource{
 							UID:  ds.UID,
 							Type: ds.Type,
 							Name: ds.Name,

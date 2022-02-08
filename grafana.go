@@ -18,7 +18,7 @@ import (
 	"reflect"
 	"strings"
 
-	gsdk "github.com/grafana/grafana-api-golang-client"
+	gapi "github.com/grafana/grafana-api-golang-client"
 	promcfg "github.com/prometheus/common/config"
 )
 
@@ -32,7 +32,7 @@ type grafanaInstance struct {
 	HttpClient      promcfg.HTTPClientConfig `yaml:"http_client"`
 }
 
-func (g *grafanaInstance) client() (*gsdk.Client, error) {
+func (g *grafanaInstance) client() (*gapi.Client, error) {
 	auth := g.Auth
 	if g.AuthFile != "" {
 		fileContent, err := ioutil.ReadFile(g.AuthFile)
@@ -45,13 +45,13 @@ func (g *grafanaInstance) client() (*gsdk.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return gsdk.New(g.URL, gsdk.Config{
+	return gapi.New(g.URL, gapi.Config{
 		APIKey: auth,
 		Client: client,
 	})
 }
 
-func (g *grafanaInstance) shouldIncludeDashboard(b *gsdk.Dashboard) bool {
+func (g *grafanaInstance) shouldIncludeDashboard(b *gapi.Dashboard) bool {
 	if len(g.IncludeTags) == 0 {
 		return true
 	}
@@ -66,21 +66,21 @@ func (g *grafanaInstance) shouldIncludeDashboard(b *gsdk.Dashboard) bool {
 	return false
 }
 
-func getTags(b *gsdk.Dashboard) []string {
+func getTags(b *gapi.Dashboard) []string {
 	if tags, ok := b.Model["tags"].([]string); ok {
 		return tags
 	}
 	return nil
 }
 
-func getUID(b *gsdk.Dashboard) (string, error) {
+func getUID(b *gapi.Dashboard) (string, error) {
 	if uid, ok := b.Model["uid"].(string); ok {
 		return uid, nil
 	}
 	return "", errors.New("No UID for dashboard")
 }
 
-func getTitle(b *gsdk.Dashboard) (string, error) {
+func getTitle(b *gapi.Dashboard) (string, error) {
 	if uid, ok := b.Model["title"].(string); ok {
 		return uid, nil
 	}
@@ -158,11 +158,11 @@ func changeDS(v reflect.Value, equiv map[string]string) {
 	}
 }
 
-func getDatasources(b *gsdk.Dashboard) []string {
+func getDatasources(b *gapi.Dashboard) []string {
 	return extractDS(reflect.ValueOf(b.Model))
 }
 
-func changeDatasources(b *gsdk.Dashboard, in, out []*gsdk.DataSource) {
+func changeDatasources(b *gapi.Dashboard, in, out []*gapi.DataSource) {
 	equiv := make(map[string]string)
 	for _, inv := range in {
 		for _, outv := range out {

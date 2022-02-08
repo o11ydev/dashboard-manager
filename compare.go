@@ -22,7 +22,7 @@ import (
 
 	"github.com/go-test/deep"
 	"github.com/google/go-cmp/cmp"
-	gsdk "github.com/grafana/grafana-api-golang-client"
+	gapi "github.com/grafana/grafana-api-golang-client"
 )
 
 type dashboardDiff struct {
@@ -49,7 +49,7 @@ func compareDashboards(cfg *config) error {
 			return err
 		}
 
-		clientDS := []*gsdk.DataSource{}
+		clientDS := []*gapi.DataSource{}
 		// Hard code limit to 50 for now.
 		for i := int64(0); i < 50; i++ {
 			ds, err := client.DataSource(i)
@@ -166,7 +166,7 @@ func compareDashboards(cfg *config) error {
 }
 
 func equalDashboards(a, b FullDashboard) bool {
-	reset := func(i gsdk.Dashboard) gsdk.Dashboard {
+	reset := func(i gapi.Dashboard) gapi.Dashboard {
 		i.Model["id"] = 0
 		i.Model["slug"] = ""
 		i.Model["version"] = 1

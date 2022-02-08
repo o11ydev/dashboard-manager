@@ -20,7 +20,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	gsdk "github.com/grafana/grafana-api-golang-client"
+	gapi "github.com/grafana/grafana-api-golang-client"
 )
 
 func snapshotDashboards(cfg *config) error {
@@ -81,7 +81,7 @@ func snapshotDashboards(cfg *config) error {
 		return err
 	}
 
-	clientDS := []*gsdk.DataSource{}
+	clientDS := []*gapi.DataSource{}
 	// Hard code limit to 50 for now.
 	for i := int64(0); i < 50; i++ {
 		ds, err := client.DataSource(i)
@@ -109,7 +109,7 @@ func snapshotDashboards(cfg *config) error {
 
 		changeDatasources(dashboard.Dashboard, dashboard.Datasources, clientDS)
 
-		resp, err := client.NewSnapshot(gsdk.Snapshot{
+		resp, err := client.NewSnapshot(gapi.Snapshot{
 			Expires: int64(snapshotExpire.Seconds()),
 			Model:   dashboard.Dashboard.Model,
 		})
