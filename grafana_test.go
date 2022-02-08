@@ -22,5 +22,6 @@ func TestChangeDataSource(t *testing.T) {
 	require.NoError(t, err)
 
 	changeDatasources(localDashboard.Dashboard, localDashboard.Datasources, expectedDashboard.Datasources)
+	require.Len(t, localDashboard.Datasources, 1)
 	require.Equal(t, localDashboard.Dashboard, expectedDashboard.Dashboard)
 }
